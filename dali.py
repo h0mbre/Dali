@@ -15,7 +15,7 @@ from cmd import Cmd
 import hashlib
 import time
 
-
+# these dicts are how we manage options settings for the various modules like: Image, Album, Task, Agent
 create_options = {'Command': '', 'Response (No,Short,Long)': '', 'Base-Image': '', 'New-Filename': ''}
 album_options = {'Auth-Type': '', 'Title': ''}
 tasking_options = {'Tasking-Image': '', 'Title': '', 'Tags': '', 'Agent': '', 'Bearer-Token': ''}
@@ -27,7 +27,10 @@ def ascii():
 	print(Style.BRIGHT + Fore.YELLOW + "	~64 61 6C 69~" + Style.RESET_ALL)
 	print("\n")
 
-# attempt to connect to MySQL, will fail if: 1. MySQL is not running or 2. MySQL hasn't been configured for credentialed login
+# attempt to connect to MySQL, will fail if: 
+# 1. MySQL is not running or 2. MySQL hasn't been configured for credentialed login by users
+# sets up the database 'dali', creates all tables with relevant columns
+# then exports the database connection for other functions to use
 def mysql_check():
 	try:
 		mydb = mysql.connector.connect(host = 'localhost', user = 'root', password = 'root')
@@ -79,6 +82,8 @@ def mysql_check():
 	mycursor.close()
 	return mydb
 
+# bare-bones implementation of this awesome class. TODO: add auto-complete
+# this just gives us a nice CLI for our program
 class MyPrompt(Cmd):
 	prompt = Style.BRIGHT + Fore.MAGENTA + "Dali> " + Style.RESET_ALL
 
@@ -121,6 +126,7 @@ class MyPrompt(Cmd):
 	def do_Image(self, inp):
 		self.do_image(inp)
 
+	# this creates our stego'd image with the appropriate options set
 	def do_image(self, inp):
 		while True:
 			inn = input(Style.BRIGHT + Fore.MAGENTA + "Dali/Image> " + Style.RESET_ALL).lower().split()
@@ -291,6 +297,8 @@ class MyPrompt(Cmd):
 	def do_Album(self, inp):
 		self.do_album(inp)
 
+	# this sets up the options and then exports the variables and their values to the create_function() 
+	# this is obviously used to create either an authenticated or unauthenticated album for agents to respond in
 	def do_album(self, inp):
 		while True:
 			inn = input(Style.BRIGHT + Fore.MAGENTA + "Dali/Album> " + Style.RESET_ALL).lower().split()
@@ -393,6 +401,8 @@ class MyPrompt(Cmd):
 	def do_Agent(self, inp):
 		self.do_agent(inp)
 
+	# this simply creates a logical entity representing an agent
+	# since this project doesn't have a real agent/implant, this is just a representation for bookeeping
 	def do_agent(self, inp):
 		while True:
 			inn = input(Style.BRIGHT + Fore.MAGENTA + "Dali/Agent> " + Style.RESET_ALL).lower().split()
@@ -455,6 +465,8 @@ class MyPrompt(Cmd):
 	def do_Task(self, inp):
 		self.do_task(inp)
 	
+	# sets up all of our tasking options and then calls create_tasking()
+	# used to upload images to the public gallery so the agent can get it and get tasked
 	def do_task(self, inp):
 		while True:
 			inn = input(Style.BRIGHT + Fore.MAGENTA + "Dali/Task> " + Style.RESET_ALL).lower().split()
@@ -567,6 +579,8 @@ class MyPrompt(Cmd):
 	def do_List(self, inp):
 		self.do_list(inp)
 
+	# used to list all of the entites we have created in MySQL
+	# can also be used to delete the entities we have created
 	def do_list(self, inp):
 		while True:
 			inn = input(Style.BRIGHT + Fore.MAGENTA + "Dali/List-Delete> " + Style.RESET_ALL).lower().split()
@@ -712,6 +726,16 @@ class MyPrompt(Cmd):
 	def do_response(self, inp):
 		self.do_Response(inp)
 
+	# probably the most complex method. this one checks for responses by:
+	# 1. looking up 'PENDING' statuses in the Tasking table
+	# 2. looks up the images used on those Tasks and then gets the album those images specified for response
+	# 3. uses the API to query those albums for images, if there are images, it counts as a response
+	# 4. decodes the response image, saves the response base64 encoded in the Tasking table under 'Response'
+	# 5. updates the status of the Agent to 'IDLE'
+	# 6. deletes the original tasking in the Gallery, phew!
+
+	# if choose, you can view simply the amount of responses found by the method or 
+	# view responses individually. they are time stamped :)
 	def do_Response(self, inp):
 		# get total number of PENDING tasks
 		mycursor = mydb.cursor()
@@ -817,11 +841,11 @@ class MyPrompt(Cmd):
 				image_hash = results_tuple_list[0][0]
 				token = results_tuple_list[0][1]
 
-				'''url = 'https://api.imgur.com/3/image/' + image_hash
+				url = 'https://api.imgur.com/3/image/' + image_hash
 				headers = {'Authorization': 'Bearer ' + token}
 				r = requests.delete(url, headers=headers)
 				response = r.content
-				response = json.loads(response.decode())'''
+				response = json.loads(response.decode())
 
 				execution = "UPDATE Tasking SET Response ='{0}' WHERE Tasking_Image={1}".format(final,task_image)
 				mycursor.execute(execution)
@@ -886,7 +910,8 @@ class MyPrompt(Cmd):
 				print("List Responses")
 				print("Get Response <Agent-ID>\n")
 			
-
+	# simply uses the API to do an album creation either auth or unauth
+	# unauth uses a client-id, auth uses a bearer token			
 	def create_album(self, token, album_title, auth_type):
 		
 		url = 'https://api.imgur.com/3/album'
@@ -920,6 +945,8 @@ class MyPrompt(Cmd):
 		mydb.commit()
 		mycursor.close()
 
+	# actually does the creation of the image file on disk
+	# stego method explained in great detail on my blog
 	def create_image(self, command, response, img_path, img_name, token, album_deletehash):
 		preserved_command = command
 		
@@ -1047,6 +1074,8 @@ class MyPrompt(Cmd):
 		mydb.commit()
 		mycursor.close()
 
+	# creates the tasking by uploading our stego'd image to the gallery
+	# in accordance with the options we set in the Task module
 	def create_tasking(self, agent_id, title, tags, task_image, token):
 		mycursor = mydb.cursor()
 		execution = "SELECT filename FROM Pictures WHERE ID = {0}".format(task_image)
