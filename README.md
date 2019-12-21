@@ -1,4 +1,8 @@
-## Dali
+<p align="center">
+  <img />
+</p>
+
+## Overview
 Dali is the server-side half of an image-based C2 channel which utilizes Imgur to host images and task agents. From Dali you can:
 - Create stego'd images with commands
 - Create albums for agent responses
