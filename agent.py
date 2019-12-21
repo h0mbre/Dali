@@ -12,7 +12,7 @@ import random
 import json
 import io
 
-url = 'https://i.imgur.com/tHWToM9.png'
+url = ''
 
 r = requests.get(url)
 	
