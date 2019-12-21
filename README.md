@@ -25,12 +25,13 @@ Please consult [my blog post on Dali](https://h0mbre.github.io/Image_Based_C2_Po
 
 ### Album Module
 Since unauthenticated `PNG` files can only be `1MB`, if you anticipate a long repsonse from the agent, such as a `ps -aux` or a `netstat -ano`, use an authenticated album. Otherwise, the image will be cropped and the response snipped if it is too long. 
-
+```
 Options:        Example Value:
 - Auth-Type     Unauth or Auth
 - Title         Test Album
 - Client-ID     <Client-ID for your API Application>
 - Bearer-Token  <Auth token associated with your API Application>
+```
   
 [![asciicast](https://asciinema.org/a/YmyjgMgTPbOVHgKrvEuTGYM9b.svg)](https://asciinema.org/a/YmyjgMgTPbOVHgKrvEuTGYM9b)
 
