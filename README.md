@@ -12,7 +12,7 @@ Dali was created as a proof-of-concept and is **bring your own implant (BYOI)**.
 Dali has not been rigorously tested for bugs, I'm sure they exist! Issue a pull-request if you want or just ping me on Twitter.
 
 ## Stego Method
-This has been covered in great detail on [my blog](https://h0mbre.github.io/Image_Based_C2_PoC/)
+This has been covered in great detail on [my blog](https://h0mbre.github.io/Image_Based_C2_PoC/). Shortly, it uses the differences in the least significant bit of each red-pixel value to create 8-digit binary numbers that are harcoded to a dictionary which holds key-value pairs for Base64 encoding/decoding.
 
 ## Usage
 Please consult [my blog post on Dali](https://h0mbre.github.io/Image_Based_C2_PoC/) before trying to use it. All testing was performed with 2560x1440 `PNG` files.
