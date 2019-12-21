@@ -23,6 +23,11 @@ Please consult [my blog post on Dali](https://h0mbre.github.io/Image_Based_C2_Po
 - Obtain a Bearer token by creating an authenticated account and tying it to your API client
 - Configure MySQL to accept credentialed logins (just because you can access MySQL as root on Kali doesn't mean it's been configured!)
 
+### Main Menu
+Here is the main-menu and the available options. The CLI behaves similarly to Metasploit, which I took inspiration from.
+
+[![asciicast](https://asciinema.org/a/jQbdCGdCzZzDkIUNdNVjJ9YNw.svg)](https://asciinema.org/a/jQbdCGdCzZzDkIUNdNVjJ9YNw)
+
 ### Album Module
 Since unauthenticated `PNG` files can only be `1MB`, if you anticipate a long repsonse from the agent, such as a `ps -aux` or a `netstat -ano`, use an authenticated album. Otherwise, the image will be cropped and the response snipped if it is too long. 
 ```
@@ -51,3 +56,40 @@ Options:        Example Value:
 ```
 
 [![asciicast](https://asciinema.org/a/hBNQIm7TpZjf1mSNAY5H76cje.svg)](https://asciinema.org/a/hBNQIm7TpZjf1mSNAY5H76cje)
+
+### Agent Module
+This module will create an agent for tasking. All this module is intended to do is organize taskings and tie images to certain agents. In a real framework, this would compile and create an implant. Theoretically, the agent would be using a combination of title-words and tags to find the tasking image, so that's what we set here. 
+```
+Options:      Example Value:
+- Title       test title
+- Tags        test,dali,cool
+```
+
+[![asciicast](https://asciinema.org/a/xrdfzsnqmCh1e63fJkIi8SKuU.svg)](https://asciinema.org/a/xrdfzsnqmCh1e63fJkIi8SKuU)
+
+### Tasking Module
+This module actually initializes tasking by tying an agent to an image and then uploading the image to the public Imgur gallery using an auth token. This module will update the tasked-agent's status to `TASKED` and will create a MySQL entry reflecting that the tasking is `PENDING`.
+```
+Options:          Example Value:
+- Tasking-Image   1
+- Title           Test Title
+- Tags            test,dali,cool
+- Agent           1
+- Bearer-Token    <Auth token associated with your API Application>
+```
+
+[![asciicast](https://asciinema.org/a/JOQTAqAZJVcdsxheitwDw82K8.svg)](https://asciinema.org/a/JOQTAqAZJVcdsxheitwDw82K8)
+
+### Response Module
+The `List Responses` command will show available responses from agents. `Get Response <Agent-ID>` command will retrieve the actual response payload from the agent.
+
+Once a response is received, this module also deletes the tasking image in the Imgur Gallery and updates the agent and tasking entries appropriately in MySQL. 
+
+[![asciicast](https://asciinema.org/a/Q5v6vsJWQsMtqRPOii4xpVCmp.svg)](https://asciinema.org/a/Q5v6vsJWQsMtqRPOii4xpVCmp)
+
+### List/Delete Modules:
+These modules are available so that you if you need some information for a module, you can exit that module, visit this module, retrieve the information and then enter back into your previous module to complete your work. The commands are pretty self explanatory and snippets of its use have been included in the asciinema videos above. 
+
+Delete will actually clear MySQL data so as far as Dali is concerned, that entity no longer exists. 
+
+## House-Keeping
