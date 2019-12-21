@@ -33,7 +33,7 @@ Here is the main-menu and the available options. The CLI behaves similarly to Me
 [![asciicast](https://asciinema.org/a/jQbdCGdCzZzDkIUNdNVjJ9YNw.svg)](https://asciinema.org/a/jQbdCGdCzZzDkIUNdNVjJ9YNw)
 
 ### Album Module
-Since unauthenticated `PNG` files can only be `1MB`, if you anticipate a long repsonse from the agent, such as a `ps -aux` or a `netstat -ano`, use an authenticated album. Otherwise, the image will be cropped and the response snipped if it is too long. 
+Since unauthenticated `PNG` files can only be `1MB`, if you anticipate a long repsonse from the agent, such as a `ps -aux` or a `netstat -ano`, use an authenticated album. Otherwise, the image will be cropped and the response snipped if it is too long. Short responses are limited to about 33,000 base64 characters.
 ```
 Options:        Example Value:
 - Auth-Type     Unauth or Auth
