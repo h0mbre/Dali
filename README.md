@@ -95,3 +95,8 @@ Once a response is received, this module also deletes the tasking image in the I
 These modules are available so that you if you need some information for a module, you can exit that module, visit this module, retrieve the information and then enter back into your previous module to complete your work. The commands are pretty self explanatory and snippets of its use have been included in the asciinema videos above. 
 
 Delete will actually clear MySQL data so as far as Dali is concerned, that entity no longer exists. 
+
+### Installation of Libraries
+```
+pip3 install -r requirements.txt
+```
